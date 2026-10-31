@@ -1,3 +1,4 @@
+
 pipeline {
 
     agent any
@@ -32,7 +33,7 @@ pipeline {
             steps {
                 echo 'Building all microservices'
 
-               sh 'docker compose -p ecommerce-microservices build'
+                sh 'docker compose -p ecommerce-microservices build'
             }
         }
 
@@ -40,22 +41,42 @@ pipeline {
             steps {
                 echo 'Deploying microservices'
 
-               sh 'docker compose -p ecommerce-microservices up -d --build'
+                sh 'docker compose -p ecommerce-microservices up -d --build'
             }
         }
 
-       stage('Verify Deployment') {
-    steps {
-        echo 'Checking running containers'
-        sh 'docker compose -p ecommerce-microservices ps'
+        stage('Verify Deployment') {
+            steps {
+                echo 'Checking running containers'
 
-        echo 'Testing Product Service'
-        sh 'curl -fsS http://localhost:5001/products'
+                sh 'docker compose -p ecommerce-microservices ps'
 
-        echo 'Testing Order Service'
-        sh 'curl -fsS http://localhost:5002/orders'
-        echo 'Testing Payment Service'
-        sh 'curl -fsS http://localhost:5003/payments'
-   
+                echo 'Testing Product Service'
+
+                sh 'curl -fsS http://localhost:5001/products'
+
+                echo 'Testing Order Service'
+
+                sh 'curl -fsS http://localhost:5002/orders'
+
+                echo 'Testing Payment Service'
+
+                sh 'curl -fsS http://localhost:5003/payments'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS: E-commerce microservices deployed successfully!'
+        }
+
+        failure {
+            echo 'FAILURE: Please check the Jenkins Console Output.'
+        }
+
+        always {
+            echo 'Jenkins pipeline execution completed.'
+        }
     }
 }
