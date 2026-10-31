@@ -44,20 +44,18 @@ pipeline {
             }
         }
 
-        stage('Verify Deployment') {
-            steps {
-                echo 'Checking running containers'
+       stage('Verify Deployment') {
+    steps {
+        echo 'Checking running containers'
+        sh 'docker compose -p ecommerce-microservices ps'
 
-                  sh 'sh docker compose -p ecommerce-microservices ps'
+        echo 'Testing Product Service'
+        sh 'curl -fsS http://localhost:5001/products'
 
-                    curl -fsS http://localhost:5001/products
-
-                    curl -fsS -X POST \
-                    http://localhost:5002/orders \
-                    -H "Content-Type: application/json" \
-                    -d '{"product_id":1,"quantity":2}'
-                '''
-            }
-        }
+        echo 'Testing Order Service'
+        sh 'curl -fsS http://localhost:5002/orders'
+        echo 'Testing Payment Service'
+        sh 'curl -fsS http://localhost:5003/payments'
+   
     }
 }
