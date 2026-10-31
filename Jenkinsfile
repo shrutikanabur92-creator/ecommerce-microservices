@@ -48,7 +48,7 @@ pipeline {
             steps {
                 echo 'Checking running containers'
 
-                  sh 'docker compose -p ecommerce-microservices ps'
+                  sh 'sh docker compose -p ecommerce-microservices ps'
 
                     curl -fsS http://localhost:5001/products
 
