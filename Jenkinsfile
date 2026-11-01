@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'Building all microservices'
 
-                sh 'docker compose build'
+               sh 'docker compose -p ecommerce-microservices build'
             }
         }
 
@@ -40,7 +40,7 @@ pipeline {
             steps {
                 echo 'Deploying microservices'
 
-                sh 'docker compose up -d'
+               sh 'docker compose -p ecommerce-microservices up -d --build'
             }
         }
 
@@ -49,7 +49,7 @@ pipeline {
                 echo 'Checking running containers'
 
                 sh '''
-                    docker compose ps
+                    docker compose -p ecommerce-microservices ps
 
                     curl -fsS http://localhost:5001/products
 
