@@ -57,7 +57,11 @@ pipeline {
                     http://localhost:5002/orders \
                     -H "Content-Type: application/json" \
                     -d '{"product_id":1,"quantity":2}'
-                '''
+                ''' 
+                sh 'bash tests/test_apis.sh'
+
+
+
             }
         }
     }
