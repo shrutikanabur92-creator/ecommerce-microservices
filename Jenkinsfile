@@ -1,4 +1,3 @@
-
 pipeline {
 
     agent any
@@ -33,7 +32,7 @@ pipeline {
             steps {
                 echo 'Building all microservices'
 
-                sh 'docker compose -p ecommerce-microservices build'
+                sh 'docker compose build'
             }
         }
 
@@ -41,7 +40,7 @@ pipeline {
             steps {
                 echo 'Deploying microservices'
 
-                sh 'docker compose -p ecommerce-microservices up -d --build'
+                sh 'docker compose up -d'
             }
         }
 
@@ -49,34 +48,17 @@ pipeline {
             steps {
                 echo 'Checking running containers'
 
-                sh 'docker compose -p ecommerce-microservices ps'
+                sh '''
+                    docker compose ps
 
-                echo 'Testing Product Service'
+                    curl -fsS http://localhost:5001/products
 
-                sh 'curl -fsS http://localhost:5001/products'
-
-                echo 'Testing Order Service'
-
-                sh 'curl -fsS http://localhost:5002/orders'
-
-                echo 'Testing Payment Service'
-
-                sh 'curl -fsS http://localhost:5003/payments'
+                    curl -fsS -X POST \
+                    http://localhost:5002/orders \
+                    -H "Content-Type: application/json" \
+                    -d '{"product_id":1,"quantity":2}'
+                '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'SUCCESS: E-commerce microservices deployed successfully!'
-        }
-
-        failure {
-            echo 'FAILURE: Please check the Jenkins Console Output.'
-        }
-
-        always {
-            echo 'Jenkins pipeline execution completed.'
         }
     }
 }
